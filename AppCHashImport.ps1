@@ -67,6 +67,7 @@ foreach ($line in $CSVImport) {
         Write-Host "NOTE: Approval Rules require a hash and do not accept file names"
         Write-Host "This line will be ignored:" $line.name $line.fileName $line.fileState
         Write-Host ""
+
     }
     #check if any Approved lines exist and warn user that the file name will be ignored and not submitted.
     elseif ($line.fileState -eq "Approved") {
@@ -124,9 +125,16 @@ else {
     foreach ($row in $CSVImport) {
         # Convert each like to a Json object
         $hashImportBody = ($row | ConvertTo-Json -Depth 1)
-        # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first entry
-        $fileRuleCreateResponse = Invoke-RestMethod -SkipCertificateCheck -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json" -OutFile "appcapiresponse.txt"
-        #tell the user what was posted.
+        # Check PS version and use -SkipCertificateCheck if PS v7 is used
+        if ($PSVersionTable.PSVersion -le "5.2") {
+            # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
+            $fileRuleCreateResponse = Invoke-RestMethod -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
+        }
+        else {
+            # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
+            $fileRuleCreateResponse = Invoke-RestMethod -SkipCertificateCheck -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
+        }
+        # tell the user what was posted.
         Write-Host "this is what is POSTed: "$hashImportBody
     }
 }
