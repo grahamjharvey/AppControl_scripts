@@ -1,0 +1,6 @@
+name,description,hash,fileName,fileState
+test1,test1 file ban,00d7e10f628646c352eaea25f219a89ba0ffa5a267983388f3e4f25aebdca103,test1.file,Ban
+test2,test2 file Approve,f4e1efb0bea9c993d80ba59993fc8bee5534be7a10c7be8d36a90d3011a29be6,test2.file,Approved
+test3,test3 file ban,b8713c36d3e6f6b2520830180cf6b5779e48410ad5d5e1b192635b0c7359fcc6,test3.file,Banned
+test4,test4 file ban,,test4.file,Banned
+test5,test5 file Approve,,file5.file,Approve
