@@ -126,7 +126,9 @@ else {
         # Convert each like to a Json object
         $hashImportBody = ($row | ConvertTo-Json -Depth 1)
         # Check PS version and use -SkipCertificateCheck if PS v7 is used
-        if ($PSVersionTable.PSVersion -le "5.2") {
+        if ($PSVersionTable.PSVersion -le "5.1") {
+            # Need to tell older version of PowerShell to trust a self-signed cert
+            [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
             # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
             $fileRuleCreateResponse = Invoke-RestMethod -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
         }
