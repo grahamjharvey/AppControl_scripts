@@ -122,21 +122,27 @@ else {
         }
     }
     # Post the Fule Rule for each row of the CSV file
-    foreach ($row in $CSVImport) {
-        # Convert each like to a Json object
-        $hashImportBody = ($row | ConvertTo-Json -Depth 1)
-        # Check PS version and use -SkipCertificateCheck if PS v7 is used
-        if ($PSVersionTable.PSVersion -le "5.2") {
-            # Need to tell older version of PowerShell to trust a self-signed cert
-            [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
-            # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
-            $fileRuleCreateResponse = Invoke-RestMethod -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
+    try {
+        foreach ($row in $CSVImport) {
+            # Convert each like to a Json object
+            $hashImportBody = ($row | ConvertTo-Json -Depth 1)
+            # Check PS version and use -SkipCertificateCheck if PS v7 is used
+            if ($PSVersionTable.PSVersion -le "5.2") {
+                # Need to tell older version of PowerShell to trust a self-signed cert
+                [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+                # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
+                $fileRuleCreateResponse = Invoke-RestMethod -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
+            }
+            else {
+                # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
+                $fileRuleCreateResponse = Invoke-RestMethod -SkipCertificateCheck -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
+            }
+            # tell the user what was posted.
+            Write-Host "this is what is POSTed: "$hashImportBody
         }
-        else {
-            # Post each line as a stadalone file rule as App Control Rile Rule API only accepts first ent
-            $fileRuleCreateResponse = Invoke-RestMethod -SkipCertificateCheck -Uri $appc_server"/api/bit9platform/v1/fileRule" -Method "POST" -Headers $headers -Body $hashImportBody -ContentType "application/json"
-        }
-        # tell the user what was posted.
-        Write-Host "this is what is POSTed: "$hashImportBody
+    }
+    catch {
+        Write-Host -ForegroundColor Red $_.Exception.Message
+        Write-Host -ForegroundColor Red $_.Exception.Response.Content
     }
 }

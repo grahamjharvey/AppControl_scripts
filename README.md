@@ -1,6 +1,6 @@
 # AppControl_scripts
 
-This repo contains scripts that leverage the VMware App Control API to perform specific tasks.
+This repo contains scripts that leverage the Carbon Black App Control API to perform specific tasks.
 
 # AppCHashImport.ps1
 This script will allow you to import a CSV of hashes or file names to the App Control server and define if those hashes/file names are to be approved or banned.
@@ -13,4 +13,6 @@ You will need to provide the App Control server URI and an API Token that has su
 
 NOTE: This script only creates new File Rules, it does not modify existing File Rules or delete File Rules.  If you import an existing hash you may receive an error.
 
-This script is provided as is and does not include support from VMware or its employees.
+This script is provided as is and does not include support from Carbon Black or its employees.
+
+The MS-driver-hashlist*.csv files contain hashes for the relevant version of the Microsoft Recommended Driver Block Rules (version number in the file name).  These CSV files contain all deduplicated hashes so will include both the MD5 and SHA256 hashes for each driver.
